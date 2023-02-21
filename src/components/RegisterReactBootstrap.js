@@ -10,20 +10,25 @@ const RegisterReactBootstrap = () => {
 
     const [passwordError, setPasswordError] = useState('');
 
+    const [success, setSuccess] = useState(false);
+
 
     const handleRegister = (event) => {
 
         event.preventDefault();
+        
+        setSuccess(false);
 
-        const email = event.target.email.value;
-        const password = event.target.password.value;
+        const form = event.target;
+        const email = form.email.value;
+        const password = form.password.value;
 
         if (!/(?=.*[A-Z].*[A-Z])/.test(password)) {
             setPasswordError('Please provide at least two upper case');
             return;
         }
-        if (!/.{8}/.test(password)) {
-            setPasswordError('Please provide at least 8 characters');
+        if (!/.{6}/.test(password)) {
+            setPasswordError('Please provide at least 6 characters');
             return;
         }
         if (!/(?=.*[!@#$&*])/.test(password)) {
@@ -39,15 +44,14 @@ const RegisterReactBootstrap = () => {
             .then(userCredential => {
                 const user = userCredential.user;
                 console.log(user);
+                setSuccess(true);
+                form.reset();
             })
             .catch(error => {
                 console.error('error', error);
+                setPasswordError(error.message);
             })
-
-        event.target.email.value = '';
-        event.target.password.value = '';
     }
-
 
     return (
         <div className='w-50 mx-auto my-5'>
@@ -63,6 +67,9 @@ const RegisterReactBootstrap = () => {
                     <Form.Control name='password' type="password" placeholder="Password" required />
                 </Form.Group>
                 <p className='text-danger'>{passwordError}</p>
+                {
+                    success && <p className='text-success'>User created successfully.</p>
+                }
                 <Button variant="primary" type="submit">
                     Register
                 </Button>
