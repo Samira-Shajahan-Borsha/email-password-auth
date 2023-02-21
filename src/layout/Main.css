@@ -1,0 +1,9 @@
+.nav-style {
+    margin: 25px;
+}
+
+
+.nav-style a {
+    margin: 20px 30px;
+    text-decoration: none;
+}
