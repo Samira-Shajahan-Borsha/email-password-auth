@@ -41,6 +41,10 @@ const LoginBootstrap = () => {
     }
 
     const handleForgetPassword = () => {
+        if (!userEmail) {
+            alert('Please enter your email address');
+            return;
+        }
         sendPasswordResetEmail(auth, userEmail)
             .then(() => {
                 alert('Password reset email sent. Please check your email');

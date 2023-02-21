@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, getAuth, sendEmailVerification } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, updateProfile } from 'firebase/auth';
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -21,9 +21,13 @@ const RegisterReactBootstrap = () => {
         setSuccess(false);
 
         const form = event.target;
+        const name = form.name.value;
         const email = form.email.value;
         const password = form.password.value;
 
+        console.log(name, email, password);
+
+        //validate password
         if (!/(?=.*[A-Z].*[A-Z])/.test(password)) {
             setPasswordError('Please provide at least two upper case');
             return;
@@ -39,8 +43,6 @@ const RegisterReactBootstrap = () => {
 
         setPasswordError('');
 
-        console.log(email, password);
-
         createUserWithEmailAndPassword(auth, email, password)
             .then(userCredential => {
                 const user = userCredential.user;
@@ -48,13 +50,14 @@ const RegisterReactBootstrap = () => {
                 setSuccess(true);
                 form.reset();
                 verifyEmail();
+                updateUserName(name);
             })
             .catch(error => {
                 console.error('error', error);
                 setPasswordError(error.message);
             })
 
-        
+
     }
 
     const verifyEmail = () => {
@@ -64,10 +67,26 @@ const RegisterReactBootstrap = () => {
             })
     }
 
+    const updateUserName = name => {
+        updateProfile(auth.currentUser, {
+            displayName: name
+        })
+            .then(() => {
+                console.log('display name updated');
+            })
+            .catch(error => {
+                console.error(error);
+            })
+    }
+
     return (
         <div className='w-50 mx-auto my-5'>
             <h1 className='text-primary'>Please Register!!</h1>
             <Form onSubmit={handleRegister}>
+                <Form.Group className="mb-3" controlId="formBasicName">
+                    <Form.Label>Enter name</Form.Label>
+                    <Form.Control name='name' type="text" placeholder="Enter name" required />
+                </Form.Group>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                     <Form.Label>Email address</Form.Label>
                     <Form.Control name='email' type="email" placeholder="Enter email" required />
